@@ -5,17 +5,17 @@ import infiniteListState from '../state/infinite.js'
 
 import createDeleteOne from './deleteOne.js'
 
-describe('updateOne', () => {
+describe('deleteOne', () => {
   describe('Errors', () => {
     test('Not found in the store', async () => {
       setActivePinia(createPinia())
       const mockConnector = vi.fn().mockImplementation((params, body) => JSON.parse(JSON.stringify((body))))
       const mockOnError = vi.fn()
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('deleteOneTestList', {
         state: infiniteListState,
         actions: {
-          updateOne: createDeleteOne(mockConnector, mockOnError)
+          deleteOne: createDeleteOne(mockConnector, mockOnError)
         }
       })
 
@@ -27,7 +27,7 @@ describe('updateOne', () => {
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
 
-      expect(store.updateOne(4, { _id: 4, name: 'updated' })).rejects.toThrow(new Error('Item with _id: 4 was not found in the store.'))
+      expect(store.deleteOne(4)).rejects.toThrow(new Error('Item with _id: 4 was not found in the store.'))
       expect(mockOnError.mock.lastCall).toEqual([new Error('Item with _id: 4 was not found in the store.')])
       expect(store.status).toBe('encountered-an-error')
       expect(store.errors).toEqual([new Error('Item with _id: 4 was not found in the store.')])
@@ -38,10 +38,10 @@ describe('updateOne', () => {
       const mockConnector = vi.fn().mockImplementation(async (params, body) => { throw new Error('mocked error') })
       const mockOnError = vi.fn()
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('deleteOneTestList', {
         state: infiniteListState,
         actions: {
-          updateOne: createDeleteOne(mockConnector, mockOnError)
+          deleteOne: createDeleteOne(mockConnector, mockOnError)
         }
       })
 
@@ -53,10 +53,10 @@ describe('updateOne', () => {
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
 
-      const resultPromise = store.updateOne(2, { _id: 2, name: 'updated' })
-      expect(store.items[1].status).toBe('update-in-progress')
+      const resultPromise = store.deleteOne(2)
+      expect(store.items[1].status).toBe('delete-in-progress')
       expect(store.items[1].data.name).toBe('second')
-      expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }, { _id: 2, name: 'updated' }])
+      expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }])
 
       try {
         await resultPromise
@@ -75,10 +75,10 @@ describe('updateOne', () => {
       const mockConnector = vi.fn().mockImplementation(async (params, body) => { throw new Error('mocked error') })
       const mockOnError = vi.fn()
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('deleteOneTestList', {
         state: infiniteListState,
         actions: {
-          updateOne: createDeleteOne(mockConnector, mockOnError, { optimistic: true })
+          deleteOne: createDeleteOne(mockConnector, mockOnError, { optimistic: true })
         }
       })
 
@@ -90,10 +90,9 @@ describe('updateOne', () => {
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
 
-      const resultPromise = store.updateOne(2, { _id: 2, name: 'updated' })
-      expect(store.items[1].status).toBe('ready')
-      expect(store.items[1].data.name).toBe('updated')
-      expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }, { _id: 2, name: 'updated' }])
+      const resultPromise = store.deleteOne(2)
+      expect(store.items[1]._id).toBe(3)
+      expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }])
 
       try {
         await resultPromise
@@ -101,7 +100,7 @@ describe('updateOne', () => {
         expect(e).toEqual(new Error('mocked error'))
       }
 
-      expect(store.items[1].data.name).toBe('second')
+      expect(store.items[1]._id).toBe(2)
       expect(store.items[1].status).toBe('encountered-an-error')
       expect(mockOnError.mock.lastCall).toEqual([new Error('mocked error')])
       expect(store.items[1].errors).toEqual([new Error('mocked error')])
@@ -111,12 +110,12 @@ describe('updateOne', () => {
   describe('Success', () => {
     test('Pessimistic', async () => {
       setActivePinia(createPinia())
-      const mockConnector = vi.fn().mockImplementation((params, body) => JSON.parse(JSON.stringify((body))))
+      const mockConnector = vi.fn().mockImplementation((params, body) => ({ ...params }))
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('deleteOneTestList', {
         state: infiniteListState,
         actions: {
-          updateOne: createDeleteOne(mockConnector)
+          deleteOne: createDeleteOne(mockConnector)
         }
       })
 
@@ -128,26 +127,25 @@ describe('updateOne', () => {
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
 
-      const resultPromise = store.updateOne(2, { _id: 2, name: 'updated' })
-      expect(store.items[1].status).toBe('update-in-progress')
+      const resultPromise = store.deleteOne(2)
+      expect(store.items[1].status).toBe('delete-in-progress')
       expect(store.items[1].data.name).toBe('second')
 
       const result = await resultPromise
 
-      expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }, { _id: 2, name: 'updated' }])
-      expect(store.items[1].status).toBe('ready')
-      expect(store.items[1].data.name).toBe('updated')
-      expect(result).toEqual({ _id: 2, name: 'updated' })
+      expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }])
+      expect(store.items[1]._id).toBe(3)
+      expect(result).toEqual({ param1: 'testparam', param2: 'testparam2', id: 2 })
     })
 
     test('Optimistic', async () => {
       setActivePinia(createPinia())
-      const mockConnector = vi.fn().mockImplementation((params, body) => JSON.parse(JSON.stringify((body))))
+      const mockConnector = vi.fn().mockImplementation((params, body) => ({ ...params }))
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('deleteOneTestList', {
         state: infiniteListState,
         actions: {
-          updateOne: createDeleteOne(mockConnector, () => {}, { optimistic: true })
+          deleteOne: createDeleteOne(mockConnector, () => {}, { optimistic: true })
         }
       })
 
@@ -159,16 +157,14 @@ describe('updateOne', () => {
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
 
-      const resultPromise = store.updateOne(2, { _id: 2, name: 'updated' })
-      expect(store.items[1].status).toBe('ready')
-      expect(store.items[1].data.name).toBe('updated')
+      const resultPromise = store.deleteOne(2)
+      expect(store.items[1]._id).toBe(3)
 
       const result = await resultPromise
 
-      expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }, { _id: 2, name: 'updated' }])
-      expect(store.items[1].status).toBe('ready')
-      expect(store.items[1].data.name).toBe('updated')
-      expect(result).toEqual({ _id: 2, name: 'updated' })
+      expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }])
+      expect(store.items[1]._id).toBe(2)
+      expect(result).toEqual({ param1: 'testparam', param2: 'testparam2', id: 2 })
     })
   })
 })

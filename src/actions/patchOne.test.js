@@ -5,14 +5,14 @@ import infiniteListState from '../state/infinite.js'
 
 import createPatchOne from './patchOne.js'
 
-describe('updateOne', () => {
+describe('patchOne', () => {
   describe('Errors', () => {
     test('Not found in the store', async () => {
       setActivePinia(createPinia())
       const mockConnector = vi.fn().mockImplementation((params, body) => JSON.parse(JSON.stringify((body))))
       const mockOnError = vi.fn()
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('patchOneTestList', {
         state: infiniteListState,
         actions: {
           patchOne: createPatchOne(mockConnector, mockOnError)
@@ -38,7 +38,7 @@ describe('updateOne', () => {
       const mockConnector = vi.fn().mockImplementation(async (params, body) => { throw new Error('mocked error') })
       const mockOnError = vi.fn()
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('patchOneTestList', {
         state: infiniteListState,
         actions: {
           patchOne: createPatchOne(mockConnector, mockOnError)
@@ -75,7 +75,7 @@ describe('updateOne', () => {
       const mockConnector = vi.fn().mockImplementation(async (params, body) => { throw new Error('mocked error') })
       const mockOnError = vi.fn()
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('patchOneTestList', {
         state: infiniteListState,
         actions: {
           patchOne: createPatchOne(mockConnector, mockOnError, { optimistic: true })
@@ -113,7 +113,7 @@ describe('updateOne', () => {
       setActivePinia(createPinia())
       const mockConnector = vi.fn().mockImplementation((params, body) => JSON.parse(JSON.stringify((body))))
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('patchOneTestList', {
         state: infiniteListState,
         actions: {
           patchOne: createPatchOne(mockConnector)
@@ -145,7 +145,7 @@ describe('updateOne', () => {
       setActivePinia(createPinia())
       const mockConnector = vi.fn().mockImplementation((params, body) => JSON.parse(JSON.stringify((body))))
 
-      const useStore = defineStore('updateOneTestList', {
+      const useStore = defineStore('patchOneTestList', {
         state: infiniteListState,
         actions: {
           patchOne: createPatchOne(mockConnector, () => {}, { optimistic: true })
