@@ -1,0 +1,35 @@
+{
+  "name": "pinia-list-store",
+  "version": "0.0.1",
+  "description": "A pinia list store.",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx standard",
+    "lint-fix": "npx standard --fix",
+    "test": "npm run lint && npx vitest run --coverage -- --check-coverage --lines 100 --functions 100 --branches 100 --statements 100"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gyulanemeth/pinia-list-store.git"
+  },
+  "keywords": [
+    "pinia",
+    "list",
+    "store",
+    "api",
+    "crud"
+  ],
+  "bugs": {
+    "url": "https://github.com/gyulanemeth/pinia-list-store/issues"
+  },
+  "homepage": "https://github.com/gyulanemeth/pinia-list-store#readme",
+  "devDependencies": {
+    "@vue/composition-api": "^1.6.2",
+    "c8": "^7.11.3",
+    "pinia": "^2.0.14",
+    "standard": "^17.0.0",
+    "vitest": "^0.15.1"
+  },
+  "author": "GYN",
+  "license": "MIT"
+}
