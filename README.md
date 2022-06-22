@@ -7,8 +7,8 @@ metaFirst
 
 list:
  - ready
- - loading
- - loading-more
+ - loading-in-progress
+ - loading-more-in-progress
  - encountered-an-error
 
 list items:

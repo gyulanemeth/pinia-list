@@ -1,7 +1,7 @@
-export default (getConnector, onError = () => {}, settings) => {
+export default (getConnector, onError = () => {}, settings = {}) => {
   return async function load () {
     try {
-      this.isLoading = true
+      this.status = 'loading-in-progress'
       this.items = []
       this.count = 0
       const result = await getConnector(this.params, { filter: this.filter, select: this.select, sort: this.sort, skip: this.skip, limit: this.limit })

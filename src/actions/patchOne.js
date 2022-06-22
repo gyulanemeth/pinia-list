@@ -14,11 +14,12 @@ export default (patchConnector, onError = () => {}, settings = {}) => {
         item.status = 'patch-in-progress'
       }
       const result = await patchConnector({ ...this.params, id }, body)
+      const retVal = JSON.parse(JSON.stringify(result)) // result will be a reactive vue obj after adding it to the state, that is why we need to copy the object
       if (!settings.optimistic) {
         item.data = { ...item.data, ...result }
         item.status = 'ready'
       }
-      return result
+      return retVal
     } catch (e) {
       if (item) {
         item.status = 'encountered-an-error'
