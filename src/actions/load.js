@@ -5,6 +5,7 @@ export default (getConnector, onError = () => {}, settings = {}) => {
       this.items = []
       this.count = 0
       const result = await getConnector(this.params, { filter: this.filter, select: this.select, sort: this.sort, skip: this.skip, limit: this.limit })
+      const retVal = JSON.parse(JSON.stringify(result))
       this.items = result.items.map(item => {
         return {
           _id: item._id,
@@ -13,14 +14,14 @@ export default (getConnector, onError = () => {}, settings = {}) => {
         }
       })
       this.count = result.count
-      this.isLoading = false
+      this.status = 'ready'
 
       if (settings.metaFirst) {
-        // load the items one by one
         this.items.forEach(item => {
           this.getOne(item._id)
         })
       }
+      return retVal
     } catch (e) {
       this.status = 'encountered-an-error'
       this.errors.push(e)
