@@ -3,19 +3,19 @@ import { setActivePinia, createPinia, defineStore } from 'pinia'
 
 import infiniteListState from '../state/infinite.js'
 
-import createLoad from './load.js'
+import createLoadMore from './loadMore.js'
 
-describe('load', () => {
+describe('loadMore', () => {
   describe('Errors', () => {
     test('Connector', async () => {
       setActivePinia(createPinia())
       const mockConnector = vi.fn().mockImplementation(async (params, query) => { throw new Error('mocked error') })
       const mockOnError = vi.fn()
 
-      const useStore = defineStore('loadTestList', {
+      const useStore = defineStore('loadMoreTestList', {
         state: infiniteListState,
         actions: {
-          load: createLoad(mockConnector, mockOnError)
+          loadMore: createLoadMore(mockConnector, mockOnError)
         }
       })
 
@@ -33,15 +33,15 @@ describe('load', () => {
       ]
       store.count = 10
 
-      const resultPromise = store.load()
-      expect(store.status).toBe('loading-in-progress')
-      expect(store.items.length).toBe(0)
-      expect(store.count).toBe(0)
+      const resultPromise = store.loadMore()
+      expect(store.status).toBe('loading-more-in-progress')
+      expect(store.items.length).toBe(3)
+      expect(store.count).toBe(10)
       expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2' }, {
         filter: { name: 'testname' },
         select: { name: 1 },
         sort: { name: -1 },
-        skip: 20,
+        skip: 3,
         limit: 30
       }])
 
@@ -52,8 +52,8 @@ describe('load', () => {
       }
 
       expect(store.status).toBe('encountered-an-error')
-      expect(store.items.length).toBe(0)
-      expect(store.count).toBe(0)
+      expect(store.items.length).toBe(3)
+      expect(store.count).toBe(10)
 
       expect(mockOnError.mock.lastCall).toEqual([new Error('mocked error')])
       expect(store.errors).toEqual([new Error('mocked error')])
@@ -66,18 +66,18 @@ describe('load', () => {
       const mockConnector = vi.fn().mockImplementation(async (params, query) => {
         return {
           items: [
-            { _id: 1, name: 'test1' },
-            { _id: 2, name: 'test2' }
+            { _id: 4, name: 'test1' },
+            { _id: 5, name: 'test2' }
           ],
-          count: 10
+          count: 20
         }
       })
       const mockOnError = vi.fn()
 
-      const useStore = defineStore('loadTestList', {
+      const useStore = defineStore('loadMoreTestList', {
         state: infiniteListState,
         actions: {
-          load: createLoad(mockConnector, mockOnError)
+          loadMore: createLoadMore(mockConnector, mockOnError)
         }
       })
 
@@ -95,15 +95,15 @@ describe('load', () => {
       ]
       store.count = 10
 
-      const resultPromise = store.load()
-      expect(store.status).toBe('loading-in-progress')
-      expect(store.items.length).toBe(0)
-      expect(store.count).toBe(0)
+      const resultPromise = store.loadMore()
+      expect(store.status).toBe('loading-more-in-progress')
+      expect(store.items.length).toBe(3)
+      expect(store.count).toBe(10)
       expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2' }, {
         filter: { name: 'testname' },
         select: { name: 1 },
         sort: { name: -1 },
-        skip: 20,
+        skip: 3,
         limit: 30
       }])
 
@@ -111,20 +111,29 @@ describe('load', () => {
 
       expect(result).toEqual({
         items: [
-          { _id: 1, name: 'test1' },
-          { _id: 2, name: 'test2' }
+          { _id: 4, name: 'test1' },
+          { _id: 5, name: 'test2' }
         ],
-        count: 10
+        count: 20
       })
       expect(store.status).toBe('ready')
-      expect(store.items.length).toBe(2)
-      expect(store.count).toBe(10)
+      expect(store.items.length).toBe(5)
+      expect(store.count).toBe(20)
       expect(store.items[0]._id).toBe(1)
       expect(store.items[0].status).toBe('ready')
-      expect(store.items[0].data.name).toBe('test1')
+      expect(store.items[0].data.name).toBe('first')
       expect(store.items[1]._id).toBe(2)
       expect(store.items[1].status).toBe('ready')
-      expect(store.items[1].data.name).toBe('test2')
+      expect(store.items[1].data.name).toBe('second')
+      expect(store.items[2]._id).toBe(3)
+      expect(store.items[2].status).toBe('ready')
+      expect(store.items[2].data.name).toBe('third')
+      expect(store.items[3]._id).toBe(4)
+      expect(store.items[3].status).toBe('ready')
+      expect(store.items[3].data.name).toBe('test1')
+      expect(store.items[4]._id).toBe(5)
+      expect(store.items[4].status).toBe('ready')
+      expect(store.items[4].data.name).toBe('test2')
     })
 
     test('Meta first', async () => {
@@ -132,19 +141,19 @@ describe('load', () => {
       const mockConnector = vi.fn().mockImplementation(async (params, query) => {
         return {
           items: [
-            { _id: 1, name: 'test1' },
-            { _id: 2, name: 'test2' }
+            { _id: 4, name: 'test1' },
+            { _id: 5, name: 'test2' }
           ],
-          count: 10
+          count: 20
         }
       })
       const mockOnError = vi.fn()
       const mockGetOne = vi.fn()
 
-      const useStore = defineStore('loadTestList', {
+      const useStore = defineStore('loadMoreTestList', {
         state: infiniteListState,
         actions: {
-          load: createLoad(mockConnector, mockOnError, { metaFirst: true }),
+          loadMore: createLoadMore(mockConnector, mockOnError, { metaFirst: true }),
           getOne: mockGetOne
         }
       })
@@ -163,15 +172,15 @@ describe('load', () => {
       ]
       store.count = 10
 
-      const resultPromise = store.load()
-      expect(store.status).toBe('loading-in-progress')
-      expect(store.items.length).toBe(0)
-      expect(store.count).toBe(0)
+      const resultPromise = store.loadMore()
+      expect(store.status).toBe('loading-more-in-progress')
+      expect(store.items.length).toBe(3)
+      expect(store.count).toBe(10)
       expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2' }, {
         filter: { name: 'testname' },
         select: { name: 1 },
         sort: { name: -1 },
-        skip: 20,
+        skip: 3,
         limit: 30
       }])
 
@@ -179,22 +188,31 @@ describe('load', () => {
 
       expect(result).toEqual({
         items: [
-          { _id: 1, name: 'test1' },
-          { _id: 2, name: 'test2' }
+          { _id: 4, name: 'test1' },
+          { _id: 5, name: 'test2' }
         ],
-        count: 10
+        count: 20
       })
       expect(store.status).toBe('ready')
-      expect(store.items.length).toBe(2)
-      expect(store.count).toBe(10)
+      expect(store.items.length).toBe(5)
+      expect(store.count).toBe(20)
       expect(store.items[0]._id).toBe(1)
-      expect(store.items[0].status).toBe('loading-in-progress')
-      expect(store.items[0].data.name).toBe('test1')
+      expect(store.items[0].status).toBe('ready')
+      expect(store.items[0].data.name).toBe('first')
       expect(store.items[1]._id).toBe(2)
-      expect(store.items[1].status).toBe('loading-in-progress')
-      expect(store.items[1].data.name).toBe('test2')
+      expect(store.items[1].status).toBe('ready')
+      expect(store.items[1].data.name).toBe('second')
+      expect(store.items[2]._id).toBe(3)
+      expect(store.items[2].status).toBe('ready')
+      expect(store.items[2].data.name).toBe('third')
+      expect(store.items[3]._id).toBe(4)
+      expect(store.items[3].status).toBe('loading-in-progress')
+      expect(store.items[3].data.name).toBe('test1')
+      expect(store.items[4]._id).toBe(5)
+      expect(store.items[4].status).toBe('loading-in-progress')
+      expect(store.items[4].data.name).toBe('test2')
 
-      expect(mockGetOne.mock.calls).toEqual([[1], [2]])
+      expect(mockGetOne.mock.calls).toEqual([[4], [5]])
     })
   })
 })

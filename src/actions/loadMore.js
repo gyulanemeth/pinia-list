@@ -1,8 +1,5 @@
 export default (getConnector, onError = () => {}, settings = {}) => {
   return async function loadMore () {
-    if (this.count <= this.items.length) {
-      return
-    }
     try {
       this.status = 'loading-more-in-progress'
       this.skip = this.items.length
@@ -11,14 +8,14 @@ export default (getConnector, onError = () => {}, settings = {}) => {
       this.items = [...this.items, ...result.items.map(item => {
         return {
           _id: item._id,
-          status: settings.loadMetaFirst ? 'loading-in-progress' : 'ready',
+          status: settings.metaFirst ? 'loading-in-progress' : 'ready',
           data: item
         }
       })]
       this.count = result.count
       this.status = 'ready'
 
-      if (settings.loadMetaFirst) {
+      if (settings.metaFirst) {
         result.items.forEach(item => {
           this.getOne(item._id)
         })

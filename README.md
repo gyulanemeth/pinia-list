@@ -1,7 +1,13 @@
-# pinia-list
+# pinia-list-store
 
 Optimistic / pessimistic
 metaFirst
+
+Usage:
+```
+import createLoad from 'pinia-list-store/src/actions/load.js'
+```
+etc...
 
 ## Item statuses
 
