@@ -22,10 +22,10 @@ export default (postConnector, onError = () => {}, settings = {}) => {
       this.status = 'encountered-an-error'
       this.errors.push(e)
 
-      if (settings.optimistic) {
+      if (newItem && settings.optimistic) {
         this.items.splice(this.items.indexOf(newItem), 1)
       }
-      
+
       onError(e)
       throw e
     }

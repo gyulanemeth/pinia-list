@@ -163,7 +163,7 @@ describe('deleteOne', () => {
       const result = await resultPromise
 
       expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }])
-      expect(store.items[1]._id).toBe(2)
+      expect(store.items[1]._id).toBe(3)
       expect(result).toEqual({ param1: 'testparam', param2: 'testparam2', id: 2 })
     })
   })
