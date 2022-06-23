@@ -1,5 +1,7 @@
 # pinia-list
 
+TODO: modify count on creation and removal
+
 Optimistic / pessimistic
 metaFirst
 
@@ -14,6 +16,7 @@ list:
 list items:
  - ready
  - loading-in-progress
+ - creation-in-progress
  - update-in-progress
  - patch-in-progress
  - delete-in-progress

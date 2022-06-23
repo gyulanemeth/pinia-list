@@ -26,9 +26,12 @@ describe('deleteOne', () => {
         { _id: 2, status: 'ready', data: { _id: 2, name: 'second' }, errors: [] },
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
+      store.count = 10
 
       expect(store.deleteOne(4)).rejects.toThrow(new Error('Item with _id: 4 was not found in the store.'))
       expect(mockOnError.mock.lastCall).toEqual([new Error('Item with _id: 4 was not found in the store.')])
+      expect(store.items.length).toBe(3)
+      expect(store.count).toBe(10)
       expect(store.status).toBe('encountered-an-error')
       expect(store.errors).toEqual([new Error('Item with _id: 4 was not found in the store.')])
     })
@@ -52,8 +55,11 @@ describe('deleteOne', () => {
         { _id: 2, status: 'ready', data: { _id: 2, name: 'second' }, errors: [] },
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
+      store.count = 10
 
       const resultPromise = store.deleteOne(2)
+      expect(store.items.length).toBe(3)
+      expect(store.count).toBe(10)
       expect(store.items[1].status).toBe('delete-in-progress')
       expect(store.items[1].data.name).toBe('second')
       expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }])
@@ -64,6 +70,8 @@ describe('deleteOne', () => {
         expect(e).toEqual(new Error('mocked error'))
       }
 
+      expect(store.items.length).toBe(3)
+      expect(store.count).toBe(10)
       expect(store.items[1].data.name).toBe('second')
       expect(store.items[1].status).toBe('encountered-an-error')
       expect(mockOnError.mock.lastCall).toEqual([new Error('mocked error')])
@@ -89,8 +97,11 @@ describe('deleteOne', () => {
         { _id: 2, status: 'ready', data: { _id: 2, name: 'second' }, errors: [] },
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
+      store.count = 10
 
       const resultPromise = store.deleteOne(2)
+      expect(store.items.length).toBe(2)
+      expect(store.count).toBe(9)
       expect(store.items[1]._id).toBe(3)
       expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }])
 
@@ -100,6 +111,8 @@ describe('deleteOne', () => {
         expect(e).toEqual(new Error('mocked error'))
       }
 
+      expect(store.items.length).toBe(3)
+      expect(store.count).toBe(10)
       expect(store.items[1]._id).toBe(2)
       expect(store.items[1].status).toBe('encountered-an-error')
       expect(mockOnError.mock.lastCall).toEqual([new Error('mocked error')])
@@ -126,14 +139,19 @@ describe('deleteOne', () => {
         { _id: 2, status: 'ready', data: { _id: 2, name: 'second' }, errors: [] },
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
+      store.count = 10
 
       const resultPromise = store.deleteOne(2)
+      expect(store.items.length).toBe(3)
+      expect(store.count).toBe(10)
       expect(store.items[1].status).toBe('delete-in-progress')
       expect(store.items[1].data.name).toBe('second')
 
       const result = await resultPromise
 
       expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }])
+      expect(store.items.length).toBe(2)
+      expect(store.count).toBe(9)
       expect(store.items[1]._id).toBe(3)
       expect(result).toEqual({ param1: 'testparam', param2: 'testparam2', id: 2 })
     })
@@ -156,13 +174,18 @@ describe('deleteOne', () => {
         { _id: 2, status: 'ready', data: { _id: 2, name: 'second' }, errors: [] },
         { _id: 3, status: 'ready', data: { _id: 3, name: 'third' }, errors: [] }
       ]
+      store.count = 10
 
       const resultPromise = store.deleteOne(2)
+      expect(store.items.length).toBe(2)
+      expect(store.count).toBe(9)
       expect(store.items[1]._id).toBe(3)
 
       const result = await resultPromise
 
       expect(mockConnector.mock.lastCall).toEqual([{ param1: 'testparam', param2: 'testparam2', id: 2 }])
+      expect(store.items.length).toBe(2)
+      expect(store.count).toBe(9)
       expect(store.items[1]._id).toBe(3)
       expect(result).toEqual({ param1: 'testparam', param2: 'testparam2', id: 2 })
     })

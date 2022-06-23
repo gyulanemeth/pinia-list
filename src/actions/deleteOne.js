@@ -10,12 +10,14 @@ export default (deleteConnector, onError = () => {}, settings = {}) => {
       if (settings.optimistic) {
         previousIdx = this.items.indexOf(item)
         this.items.splice(previousIdx, 1)
+        this.count = this.count - 1
       } else {
         item.status = 'delete-in-progress'
       }
       const result = await deleteConnector({ ...this.params, id })
       if (!settings.optimistic) {
         this.items.splice(this.items.indexOf(item), 1)
+        this.count = this.count - 1
       }
       return result
     } catch (e) {
@@ -25,6 +27,7 @@ export default (deleteConnector, onError = () => {}, settings = {}) => {
 
         if (settings.optimistic) {
           this.items.splice(previousIdx, 0, item)
+          this.count = this.count + 1
         }
       } else {
         this.status = 'encountered-an-error'
