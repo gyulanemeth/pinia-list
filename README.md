@@ -1,7 +1,5 @@
 # pinia-list
 
-TODO: modify count on creation and removal
-
 Optimistic / pessimistic
 metaFirst
 
