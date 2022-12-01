@@ -16,7 +16,7 @@ export default (getConnector, onError = () => {}, settings = {}) => {
       this.count = result.count
       this.status = 'ready'
       this.pageNum = pageNumber
-      this.numOfPages = this.count / this.itemsPerPage
+      this.numOfPages = Math.ceil(this.count / this.itemsPerPage)
 
       if (settings.metaFirst) {
         this.items.forEach(item => {
