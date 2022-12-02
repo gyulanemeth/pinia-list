@@ -6,10 +6,14 @@ export default () => {
     filter: {},
     select: {},
     sort: {},
-    pageNum: 0,
+
+    pageNum: 1,
     itemsPerPage: 10,
+    numOfPages: 0,
 
     items: [],
-    numOfPages: 0
+    count: 0,
+
+    errors: []
   }
 }
