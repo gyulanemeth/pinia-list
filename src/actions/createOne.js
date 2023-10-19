@@ -3,7 +3,7 @@ export default (postConnector, onError = () => {}, settings = {}) => {
     let newItem
     try {
       if (settings.optimistic) {
-        newItem = { _id: 'unknown', status: 'creation-in-progress', data: body }
+        newItem = { _id: 'unknown', status: 'creation-in-progress', data: body, errors: [] }
         this.items.unshift(newItem)
         this.count = this.count + 1
       }
@@ -14,6 +14,7 @@ export default (postConnector, onError = () => {}, settings = {}) => {
         newItem._id = result._id
         newItem.data = result
         newItem.status = 'ready'
+        newItem.errors = []
       } else {
         this.items.unshift({ _id: result._id, status: 'ready', data: result })
         this.count = this.count + 1

@@ -1,6 +1,6 @@
 {
   "name": "pinia-list-store",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A pinia list store.",
   "main": "index.js",
   "scripts": {
