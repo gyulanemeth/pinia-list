@@ -10,7 +10,8 @@ export default (getConnector, onError = () => {}, settings = {}) => {
         return {
           _id: item._id,
           status: settings.metaFirst ? 'loading-in-progress' : 'ready',
-          data: item
+          data: item,
+          errors: []
         }
       })
       this.count = result.count
